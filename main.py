@@ -1,10 +1,9 @@
 from flask_cors import CORS
-
 from api import app, db
 
-from api import api_bp
+from api.api import api_bp
 
-from api import init_api
+from model.api import init_api
 
 app.register_blueprint(api_bp)
 
@@ -13,7 +12,7 @@ def init_db():
     with app.app_context():
         db.create_all()
         
-        # init_api()
+        init_api()
 
 if __name__ == "__main__":
     cors = CORS(app)
