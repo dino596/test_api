@@ -1,18 +1,18 @@
 from flask_cors import CORS
-from api import app, db
+from jarmi_api import app, db
 
-from api.api import api_bp
+from jarmi_api.api.souls import souls_bp
 
-from model.api import init_api
+from jarmi_api.model.souls import init_souls
 
-app.register_blueprint(api_bp)
+app.register_blueprint(souls_bp)
 
 @app.before_first_request
 def init_db():
     with app.app_context():
         db.create_all()
         
-        init_api()
+        init_souls()
 
 if __name__ == "__main__":
     cors = CORS(app)
