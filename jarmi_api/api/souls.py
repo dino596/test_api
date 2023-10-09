@@ -14,4 +14,10 @@ class SoulsAPI(Resource):
             return souls.to_dict()
         return {"message": "not found"}, 404
 
+class SoulsListAPI(Resource):
+    def get(self):
+        souls = db.session.query(Souls).all()
+        return [soul.to_dict() for soul in souls]
+
 souls_api.add_resource(SoulsAPI, "/souls")
+souls_api.add_resource(SoulsListAPI, "/soulsList")
