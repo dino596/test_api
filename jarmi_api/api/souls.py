@@ -14,6 +14,56 @@ class SoulsAPI(Resource):
             return souls.to_dict()
         return {"message": "not found"}, 404
 
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument("class_name", required=True, type=str)
+        parser.add_argument("health", required=True, type=int)
+        parser.add_argument("attack", required=True, type=int)
+        parser.add_argument("resistance", required=True, type=int)
+        parser.add_argument("power", required=True, type=int)
+        args = parser.parse_args()
+        souls = Souls(args["class_name"], args["health"], args["attack"], args["resistance"], args["power"])
+
+        try:
+            db.session.add(souls)
+            db.session.commit()
+            return souls.to_dict(), 201
+        except Exception as exception:
+            db.session.rollback()
+            return {"message":f"error {exception}"}, 500
+
+    def put(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument("id", required=True, type=int)
+        args = parser.parse_args()
+
+        try:
+            souls = db.session.query(Souls).get(args["id"])
+            if souls:
+                db.session.commit()
+            else:
+                return {"message": "not found"}, 404
+        except Exception as exception:
+            db.session.rollback()
+            return {"message": f"error {exception}"}, 500
+    
+    def delete(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument("id", required=True, type=int)
+        args = parser.parse_args()
+
+        try:
+            souls = db.session.query(Souls).get(args["id"])
+            if souls:
+                db.session.delete(souls)
+                db.session.commit()
+                return schedule.to_dict()
+            else:
+                return {"message": "not found"}, 404
+        except Exception as exception:
+            db.session.rollback()
+            return {"message": f"error {exception}"}, 500
+
 class SoulsListAPI(Resource):
     def get(self):
         souls = db.session.query(Souls).all()
