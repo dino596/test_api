@@ -57,7 +57,7 @@ class SoulsAPI(Resource):
             if souls:
                 db.session.delete(souls)
                 db.session.commit()
-                return schedule.to_dict()
+                return souls.to_dict()
             else:
                 return {"message": "not found"}, 404
         except Exception as exception:
