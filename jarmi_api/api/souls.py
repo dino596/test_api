@@ -35,12 +35,28 @@ class SoulsAPI(Resource):
     def put(self):
         parser = reqparse.RequestParser()
         parser.add_argument("id", required=True, type=int)
+        parser.add_argument("class_name", type=str)
+        parser.add_argument("health", type=int)
+        parser.add_argument("attack", type=int)
+        parser.add_argument("resistance", type=int)
+        parser.add_argument("power", type=int)
         args = parser.parse_args()
-
+        
         try:
             souls = db.session.query(Souls).get(args["id"])
             if souls:
+                if args["class_name"] is not None:
+                    souls.class_name = args["class_name"]
+                if args["health"] is not None:
+                    souls.health = args["health"]
+                if args["attack"] is not None:
+                    souls.attack = args["attack"]
+                if args["resistance"] is not None:
+                    souls.resistance = args["resistance"]
+                if args["power"] is not None:
+                    souls.power = args["power"]
                 db.session.commit()
+                return souls.to_dict(), 200
             else:
                 return {"message": "not found"}, 404
         except Exception as exception:
